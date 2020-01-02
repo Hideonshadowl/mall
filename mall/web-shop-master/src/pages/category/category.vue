@@ -5,7 +5,7 @@
                 <i class="iconfont icon-left" @click="goHome"></i>
                 <div class="header-search">
                     <i class="iconfont icon-search"></i>
-                    <router-link tag="span" class="search-title" to="./search">家电返场同价11.11</router-link>
+                    <router-link tag="span" class="search-title" to="./search"></router-link>
                 </div>
                 <i class="iconfont icon-More"></i>
             </header>
