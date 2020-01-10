@@ -80,9 +80,9 @@ WSGI_APPLICATION = 'djanopro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mall1',
+        'NAME': 'malldb',
         'USER': 'root',
-        'PASSWORD': '123654',
+        'PASSWORD': 'lzl123654',
         'HOST': 'localhost',
         'PORT': '3306',
     }
