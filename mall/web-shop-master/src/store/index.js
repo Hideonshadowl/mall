@@ -1,35 +1,53 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import actions from './actions.js'
-import * as type from './types';
 Vue.use(Vuex);
 const store=new Vuex.Store({
-  actions,
-  state:{
-        cartlist:[],
-        user:'',
-        pw1:'',
+  state: {
+    foodlist: [],
+    shopcartlist:[],
+  },
+  mutations: {
+    addfood(state, val) {
+      state.foodlist = val
     },
-    mutations:{
+    addcartlist(state, val) {
+      state.shopcartlist.push(val)
+    },
+    clearcartlist(state) {
+      state.shopcartlist=[]
+    },
+    reduce_count(state,val) {
+      state.shopcartlist.forEach(value => {
+        if (val===value && value[1]>1){
+          value[1]--
+        }
+      })
+    },
+    add_count(state,val) {
+      state.shopcartlist.forEach(value => {
+        if (val===value){
+          value[1]++
+        }
+      })
+    },
+  },
+  actions: {
+    adddata(context, val) {
+      context.commit('addfood', val)
+    },
+    addshoplist(context, val) {
+      context.commit('addcartlist', val)
+    },
+    clearshoplist(context) {
+      context.commit('clearcartlist')
+    },
+    reducecount(context,val) {
+      context.commit('reduce_count',val)
+    },
+    addcount(context,val) {
+      context.commit('add_count',val)
+    },
 
-        [type.ADDCART](state,val){
-          state.cartlist.push(val)
-        },
-        [type.SAVEUSER](state,val){
-            state.user=val
-        },
-        [type.SAVEPW](state,val){
-          state.pw1=val
-        },
-        clearuser(state){
-          state.user=''
-        },
-        clearpw(state){
-          state.pw1=''
-        },
-
-    }
-
-
-})
+  }
+});
 export default store

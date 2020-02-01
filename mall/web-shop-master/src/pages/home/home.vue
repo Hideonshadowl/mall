@@ -16,35 +16,36 @@
         <nav-bar></nav-bar>
         <slider :imgUrl="headList"></slider>
 
-        <swiper :options="swiperOption" style="margin-top: 0.8rem">
+        <swiper :options="swiperOption" style="margin-top: 1rem">
           　　<swiper-slide v-for="(item,index) in swiper_img" :key="index">
-          　　　　<img :src='item' alt="" style="height: 5rem;width: 10rem">
+          　　　　<img :src=item alt="" style="height: 6.7rem;width: 10rem">
           　　</swiper-slide>
           　　<div class="swiper-pagination" slot="pagination"></div>
         </swiper>
 
 
-        <el-carousel indicator-position="outside">
-          <el-carousel-item v-for="item in ['公告1','公告2']" :key="item">
-            <h3>{{ item }}</h3>
-          </el-carousel-item>
-        </el-carousel>
+<!--        <el-carousel indicator-position="outside">-->
+<!--          <el-carousel-item v-for="item in ['公告1','公告2']" :key="item">-->
+<!--            <h3>{{ item }}</h3>-->
+<!--          </el-carousel-item>-->
+<!--        </el-carousel>-->
 
 
-        <div style="display: flex;flex-wrap: wrap;margin-left: 0.4rem" >
-          <div style="width: 25%;height: 2.7rem" v-for="item in ['威士忌','琴酒','白兰地','轩尼诗','伏加特','朗姆酒','龙舌兰','金酒']" @click="show">
-            <img style="width: 2rem;height: 2rem" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425237&di=e28618fc970343d607baaeaf40697078&imgtype=0&src=http%3A%2F%2Fimg1.juimg.com%2F160118%2F330718-16011QRF647.jpg" alt="">
-            <p style="font-size: 0.4rem;position: relative;left: -0.25rem;text-align: center">{{item}}</p>
+        <div style="display: flex;flex-wrap: wrap;margin-left: 0.9rem" >
+          <div style="width: 33%;height: 2.7rem" v-for="item in this.categoryList" @click="show(item)">
+            <img style="width: 2rem;height: 2rem" :src=item.url alt="">
           </div>
         </div>
 
         <p style="font-size: 0.5rem;margin-left: 4rem;margin-top: 0.2rem;float: left">店长推荐</p>
         <section class="floor-list" style="position: relative;top: 0.5rem">
                 <div class="floor-content">
-                    <div class="floor-category" v-for="category in floorList" >
+                    <div class="floor-category" v-for="singlewine in floorList" @click="showgood(singlewine)">
                         <div class="floor-products">
-                          <img style="width: 3rem;height: 3rem" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425237&di=e28618fc970343d607baaeaf40697078&imgtype=0&src=http%3A%2F%2Fimg1.juimg.com%2F160118%2F330718-16011QRF647.jpg" alt="">
+                          <img style="width: 3rem;height: 3rem" :src=singlewine.img_url  alt="">
                         </div>
+                        <p>{{singlewine.price}}¥</p>
+                        <p>{{singlewine.name}}</p>
                     </div>
                 </div>
         </section>
@@ -56,13 +57,12 @@
     import mHeader from 'components/mHeader'
     import navBar from 'components/navBar'
     import slider from 'components/common/slider'
-    import {homeData,checkLogin} from "../../service/getData";
-    import {getStore,setStore} from "../../common/js/util";
-    import Swiper from 'swiper';
     import 'swiper/dist/css/swiper.min.css';
+    import {mapActions} from 'vuex';
+    import { mapState } from 'vuex'
     export default {
 
-
+        computed: mapState(['foodlist']),
 
         data() {
             return {
@@ -80,34 +80,52 @@
                   slideShadows : true
                   }
                 },
-                swiper_img:['https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425237&di=e28618fc970343d607baaeaf40697078&imgtype=0&src=http%3A%2F%2Fimg1.juimg.com%2F160118%2F330718-16011QRF647.jpg',
-                            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425238&di=2a82bd9c3eefc530ac31191d9e2a1813&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Faa3343276cb5726d5c0d802a12d26c57ee92d942bc4e-I41DJj_fw658',
-                            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425229&di=6c5bfe9a3adeb6a8f86fb7c8b14b3e59&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fb4b3f04be1818c57efe272e6b23afa895751deab1210c-q25FRJ_fw658',
-                            'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161520573&di=c7a24115e8d4823e240ab29e2b96a516&imgtype=0&src=http%3A%2F%2Fpic2.zhimg.com%2Fv2-55f2b35fbb6b572cf9cc1c343ed1a1a0_1200x500.jpg'],
+                swiper_img:["static/lunbo/WechatIMG27.jpeg","static/lunbo/WechatIMG32.jpeg"],
                 headList: [],
-                categoryList: [],
+                categoryList: [{category:"朗姆酒",url:"static/category/lmj.png"},{category:"伏特加",url:"static/category/fjt.png"},{category:"利口酒",url:"static/category/lkj.png"},{category:"特基拉",url:"static/category/tjl.png"},{category:"威士忌",url:"static/category/wsj.png"},{category:"香槟",url:"static/category/xb.png"}],
                 floorList: ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a'],
                 headerActive: true,
-                isLogin: false
+                isLogin: false,
+                urll:'static/allimg/48¥ Lubuski Gin 700ml 40vol.png'
+
             }
         },
         beforeCreate(){
 
         },
         created(){
-
-        },
+        //发起ajax post请求，访问/order/pay，传递参数：order_id
+        this.axios.get('http://127.0.0.1:8000/showallwine/')
+          .then(data=>{
+            this.adddata(data.data.res);
+            this.floorList=data.data.res;
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      },
         mounted() {
 
         },
         methods: {
-            // pageScroll() {
-            //     let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            //     scrollTop > 100 ? this.headerActive = true : this.headerActive = true
-            // },
-            show(){
-                this.$router.push('./product-list')
-            }
+            ...mapActions(['adddata']),
+              show(item){
+              this.$router.push({
+                path:'./product-list',
+                query:{
+                  category:item.category
+                }
+              })
+              },
+              showgood(item){
+              this.$router.push({
+                path:'./product-detail',
+                query:{
+                  good:item
+                }
+              }
+              )
+              }
         },
         components: {
             mHeader,

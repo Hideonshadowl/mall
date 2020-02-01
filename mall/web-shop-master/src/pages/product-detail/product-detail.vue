@@ -14,18 +14,18 @@
             <i class="iconfont icon-More"></i>
         </header>
         <section class="product-focus">
-          <img src="../../assets/TL图片20191012101102.jpg" alt="" style="width: 10rem;height: 9rem">
+          <img :src=this.good.img_url alt="" style="width: 10rem;height: 9rem">
         </section>
         <span :class="{'active' : navIndex === 0}" data-type="product" @click="scrollToView($event)" style="">
-                 <span style="font-size: 0.5rem">天之蓝</span>
-                 <span style="margin-left: 0.4rem;font-size: 0.5rem">600ml</span>
-                 <span style="margin-left: 0.4rem;font-size: 0.5rem">8℃</span>
+                 <span style="margin-left: 0.4rem;font-size: 0.5rem">{{this.good.name}}</span>
+                 <span style="margin-left: 0.4rem;font-size: 0.5rem">{{this.good.volume}}ml</span>
+                 <span style="margin-left: 0.4rem;font-size: 0.5rem">{{this.good.degree}}vol</span>
+                 <p style="margin-left: 0.4rem;font-size: 0.5rem;color: red">{{this.good.price}}¥</p>
         </span>
         <section class="detail-info">
             <p class="detail-info-name" v-text="productData.name"></p>
             <p class="detail-info-subtitle" v-text="productData.subtitle"></p>
             <div>
-                <span class="detail-info-price" v-text="`￥$88`" style="margin-top: -0.4rem;margin-left: -0.5rem"></span>
                 <span class="detail-info-stock" v-text="`销量:90`" style="margin-top: -0.25rem"></span>
             </div>
         </section>
@@ -75,9 +75,9 @@
             <section class="cart-wrap" v-show="cartShow">
                 <div class="cart-content">
                     <div class="cart-head">
-                        <img src="../../assets/TL图片20191012101102.jpg" v-if="subImageList.length > 0">
+                        <img :src=this.good.img_url v-if="subImageList.length > 0">
                         <div>
-                            <span class="price">￥$88</span>
+                            <span class="price">{{this.good.price*this.productCount}}¥</span>
                             <p>{{productData.name}}</p>
                         </div>
                         <!--<i class="iconfont icon-close" @click="closeCart"></i>-->
@@ -96,7 +96,7 @@
                             <i @click="addCount" :class="{'active' : productCount === productData.stock}">+</i>
                         </div>
                     </div>
-                    <button class="add-cart" @click="confirmCart">确认</button>
+                    <button class="add-cart" @click="confirmCart()">确认</button>
                 </div>
             </section>
         </transition>
@@ -108,11 +108,12 @@
     import framework from 'components/common/frame'
     import slider from 'components/common/slider'
     import {productDetail, cartCount, addCart} from "../../service/getData";
-    import {mapState, mapMutations} from 'vuex'
+    import {mapState,mapActions} from 'vuex'
 
     export default {
         data() {
             return {
+                good:'',
                 good_Introduction:true,
                 good_parameter:false,
                 good_service:false,
@@ -127,27 +128,17 @@
                 frameShow: true
             }
         },
-        computed: {
-            ...mapState({
-                followList: state => state.followList
-            })
-        },
+        computed:mapState(['shopcartlist']),
+
         created() {
-            // this.getDetail()
-            // this.getCartCount()
+            this.good=this.$route.query.good
         },
         mounted() {
-            this.$nextTick(function () {
-                window.addEventListener('scroll', this.pageScroll)
-                setTimeout(()=>{
-                    this.frameShow = false
-                },800)
-            })
+
         },
         methods: {
-            ...mapMutations([
-                'ADD_FOLLOW',
-                'REDUCE_FOLLOW'
+            ...mapActions([
+                'addshoplist','clearshoplist'
             ]),
           show1(){this.good_Introduction=true; this.good_parameter=false;this.good_service=false;this.good_problem=false},
           show2(){this.good_Introduction=false;this.good_parameter=true;this.good_service=false;this.good_problem=false},
@@ -177,7 +168,7 @@
             },
             addCart() {
                 this.cartShow = true
-                ModalHelper.afterOpen()
+
             },
             addCount(){
                 if(this.productCount === this.productData.stock){
@@ -193,10 +184,16 @@
                 this.productCount --
             },
             //加入购物车
-            async confirmCart(){
+            confirmCart(){
+                this.addtest(this.good,this.productCount);
                 this.cartShow=false;
-                alert('添加成功')
-                
+                alert('添加成功');
+                // this.clearshoplist();
+                console.log(this.shopcartlist)
+
+            },
+            addtest(obj,amount){
+              this.addshoplist([obj,amount])
             },
             closeCart() {
                 this.cartShow = false

@@ -2,23 +2,27 @@
 
   <div>
 
-        <div class="search-header" style="position: fixed">
+        <div class="search-header" >
           <i class="iconfont icon-left" @click="goBack"></i>
-          <div class="search-con">
-            <i class="iconfont icon-search"></i>
-            <input v-focus placeholder="" v-model="searchText" />
-          </div>
-          <span @click="">搜索</span>
+<!--          <div class="search-con">-->
+<!--            <i class="iconfont icon-search"></i>-->
+<!--            <input v-focus placeholder="" v-model="searchText" />-->
+<!--          </div>-->
+<!--          <span @click="">搜索</span>-->
         </div>
 
 
-        <div style="display: flex;flex-wrap: wrap;margin-top: 1.5rem" >
-          <div @click="showgood" class="content" style=":order: a;width: 50%;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);height: 5rem" v-for="a in productList">
-            <img style="width: 3.5rem;height: 3.5rem;margin-left: 0.8rem" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574161425237&di=e28618fc970343d607baaeaf40697078&imgtype=0&src=http%3A%2F%2Fimg1.juimg.com%2F160118%2F330718-16011QRF647.jpg" alt="">
-            <p style="font-size: 0.4rem;margin-left: 0.8rem">{{a}}</p>
-            <p style="font-size: 0.4rem;margin-left: 0.8rem">$88.00</p>
+      <section class="floor-list" style="">
+        <div class="floor-content">
+          <div class="floor-category" v-for="singlewine in this.productList" @click="showgood(singlewine)">
+            <div class="floor-products">
+              <img style="width: 3rem;height: 3rem" :src=singlewine.img_url  alt="">
+            </div>
+            <p>{{singlewine.price}}¥</p>
+            <p>{{singlewine.name}}</p>
           </div>
         </div>
+      </section>
 
   </div>
 
@@ -27,13 +31,15 @@
 <script>
 
 
-  import {mapMutations} from 'vuex'
+  import {mapActions} from 'vuex'
+  import { mapState } from 'vuex'
   export default {
+    computed: mapState(['foodlist']),
     data() {
       return {
         searchText:'',
         keyword: '',
-        productList: ['b','b','b','b','b','b','b','b','b','b','b','b','b','b','b'],
+        productList: [],
         orderBy: 'default',
         params: {
           categoryId: '',
@@ -50,19 +56,32 @@
       }
     },
     created() {
+        console.log(this.thiscategory);
         if (this.$route.query.search_value) { this.productList=[this.$route.query.search_value] }
     },
-    mounted() {
+    destroyed() {
 
+    },
+    mounted() {
+          this.foodlist.forEach(val=>{
+            if(val.category===this.$route.query.category){
+              this.productList.push(val)
+            }
+          })
       },
     methods: {
-      ...mapMutations([
-        'RECORE_FOOT'
-      ]),
-      showgood(){
-        this.$router.push('./product-detail')
+      ...mapActions(['clearlist']),
+      showgood(item){
+        this.$router.push({
+            path:'./product-detail',
+            query:{
+              good:item
+            }
+          }
+        )
       },
-      goBack(){this.$router.push('./home')}
+      goBack(){
+        this.$router.push('./home')}
       },
       //价格排序
       selectOrder(e) {
@@ -129,6 +148,7 @@
 <style lang="scss" type="text/scss" scoped>
   @import '../../common/style/mixin';
 
+
   .search-header {
     @include fj;
     width: 100%;
@@ -170,6 +190,50 @@
       font-size: 26px;
       background: #E93B3D;
       border-radius: 10px;
+    }
+  }
+  .floor-list {
+    width: 100%;
+    padding-bottom: 100px;
+    .floor-head {
+      width: 100%;
+      height: 80px;
+      background: #F6F6F6;
+    }
+    .floor-content {
+      display: flex;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      width: 100%;
+      @include boxSizing;
+      .floor-category {
+        width: 50%;
+        padding: 20px;
+        border-right: 1px solid #dcdcdc;
+        border-bottom: 1px solid #dcdcdc;
+        @include boxSizing;
+        &:nth-child(2n) {
+          border-right: none;
+        }
+        p {
+          font-size: 34px;
+          color: #333;
+          &:nth-child(2) {
+            padding: 10px 0;
+            font-size: 26px;
+            color: $red;
+          }
+        }
+        .floor-products {
+          display: flex;
+          justify-content: space-around;
+          width: 100%;
+          img {
+            width: 130px;
+            height: 130px;
+          }
+        }
+      }
     }
   }
 </style>
