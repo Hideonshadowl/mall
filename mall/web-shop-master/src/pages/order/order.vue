@@ -5,17 +5,16 @@
             <span>提交订单
             </span>
         </header>
-        <loading v-show="isLoading" :loading-type="2"></loading>
-        <section v-show="!isLoading">
+        <section v-show="isLoading">
             <div class="order-shipping" :class="{'fixed' : shippingFixed}">
                 <router-link tag="div" class="shipping-info" to="./shipping">
-                    <div class="info" v-if="!shippingEmpty">
+                    <div class="info" v-if="$store.state.adressinfo.address">
                         <p>
-                            <span class="name">{{shippingInfo}}</span>
-                            <span class="phone">{{shippingInfo}}</span>
+                            <span class="name">{{this.$store.state.adressinfo.receiverName}}</span>
+                            <span class="phone">{{this.$store.state.adressinfo.receiverMobile}}</span>
                         </p>
                         <div>
-                            <span>{{shippingInfo}}{{shippingInfo}}{{shippingInfo}}</span>
+                            <span>{{this.$store.state.adressinfo.address}}{{this.$store.state.adressinfo.receiverAddress}}</span>
                             <i class="iconfont icon-right"></i>
                         </div>
                     </div>
@@ -26,14 +25,13 @@
                 <img src="../../assets/shipping-bottom.png" />
             </div>
             <div class="order-list">
-                <div class="order-item" v-for="item in orderList">
-                    <img :src="imageHost+item.productMainImage">
+                <div class="order-item" v-for="item in this.$store.state.shopcartlist">
+                    <img :src="item[0].img_url">
                     <div class="product-info">
-                        <p class="name">{{item}}</p>
-                        <p class="subtitle">{{item}}</p>
+                        <p class="name">{{item[0].name}}</p>
                         <div>
-                            <span class="price">￥ {{item}}</span>
-                            <span class="quantity">X {{item}}</span>
+                            <span class="price">{{item[0].price}} ￥</span>
+                            <span class="quantity">{{item[1]}}</span>
                         </div>
                     </div>
                 </div>
@@ -42,7 +40,7 @@
                 <div>
                     <p>
                         <span>商品金额</span>
-                        <span>￥ {{cartTotalPrice}}</span>
+                        <span>￥{{this.$route.query.totalprice}} </span>
                     </p>
                     <p>
                         <span>运费</span>
@@ -66,7 +64,6 @@
             return {
                 shippingList:['a'],
                 shippingInfo: 'a',
-                orderList: ['a','b'],
                 imageHost: '',
                 cartTotalPrice: 0,
                 shippingFixed: false,
@@ -85,20 +82,21 @@
         },
 
         created(){
-            if(!this.shippingId){
-                this.getShippingId()
-            }else{
-                this.getAddress()
-            }
-            this.getOrderList()
+            console.log(this.$store.state.adressinfo)
+            // if(!this.shippingId){
+            //     this.getShippingId()
+            // }else{
+            //     this.getAddress()
+            // }
+            // this.getOrderList()
         },
         mounted(){
-            this.$nextTick(()=>{
-                this.calculateHeight()
-                setTimeout(()=>{
-                    this.isLoading = false
-                },500)
-            })
+            // this.$nextTick(()=>{
+            //     this.calculateHeight()
+            //     setTimeout(()=>{
+            //         this.isLoading = false
+            //     },500)
+            // })
         },
         methods: {
             ...mapMutations([

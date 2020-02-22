@@ -36,7 +36,7 @@
                 <div class="user-reset-header">
                     <i class="iconfont icon-left" @click="hideShippingWrap"></i>
                     <span>添加新地址</span>
-                    <a @click="saveShipping($event)" class="add-save">保存</a>
+                    <a @click="saveShipping()" class="add-save">保存</a>
                 </div>
                 <div class="new-shipping-content">
                     <div class="new-shipping-item receiver">
@@ -66,7 +66,7 @@
                 <div class="user-reset-header">
                     <i class="iconfont icon-left" @click="hideShippingWrap"></i>
                     <span>编辑地址</span>
-                    <a @click="saveShipping($event)" class="edit-save">保存</a>
+                    <a @click="saveShipping()" class="edit-save">保存</a>
                 </div>
                 <div class="new-shipping-content">
                     <div class="new-shipping-item receiver">
@@ -155,7 +155,7 @@
     import listScroll from '../../components/common/list-scroll'
     import popup from 'components/common/popup'
     import {addressList,addAddress,updateAddress} from "../../service/getData";
-    import {mapState,mapMutations} from 'vuex'
+    import {mapState,mapActions} from 'vuex'
     import areaData from './area'
     import {removeSpace,formValidate} from "../../common/js/util";
     export default {
@@ -205,8 +205,8 @@
             console.log(areaData)
         },
         methods: {
-            ...mapMutations([
-                'RECORD_SHIPPINGID'
+            ...mapActions([
+                'addadress'
             ]),
             async getShippingData(){
                 let pageNum = 1,
@@ -346,31 +346,9 @@
                 }
             },
             //添加新地址 or 更新地址
-            saveShipping(e){
-                console.log(e.currentTarget.className)
-                console.log(this.receiverAddress)
-                if(!this.shipping.receiverName || !this.shipping.receiverMobile || this.provinceIndex === -1
-                    || this.cityIndex === -1 || this.areaIndex === -1 || !this.shipping.receiverZip || !this.receiverAddress){
-                    alert('请将表格填写完整')
-                    return
-                }
-                if(!formValidate(this.shipping.receiverMobile,'phone')){
-                    alert('手机号格式不正确')
-                    return
-                }
-                let $className = e.currentTarget.className
-                if($className === 'add-save'){
-                    this.shipping.receiverAddress = this.areaTitle + this.receiverAddress
-                    addAddress(this.shipping).then(()=>{})
-                    this.addShippingWrap = false
-                }else{
-                    this.shipping.receiverAddress = this.receiverAddress
-                    updateAddress(this.shipping).then(()=>{})
-                    this.editShippingWrap = false
-                }
-                setTimeout(()=>{   //确保数据更新到服务端在请求地址列表
-                    this.getShippingData()
-                },500)
+            saveShipping(){
+              this.addadress([this.shipping.receiverName,this.shipping.receiverMobile,this.address,this.shipping.receiverZip,this.receiverAddress]);
+              this.$router.push('./order')
             },
             resetShipping(){  //重置shipping参数
                 this.shipping.receiverPhone = ''

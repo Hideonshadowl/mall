@@ -5,6 +5,7 @@ const store=new Vuex.Store({
   state: {
     foodlist: [],
     shopcartlist:[],
+    adressinfo:{receiverName:'',receiverMobile:'',address:'',receiverZip:'',receiverAddress:''}
   },
   mutations: {
     addfood(state, val) {
@@ -21,6 +22,7 @@ const store=new Vuex.Store({
         if (val===value && value[1]>1){
           value[1]--
         }
+
       })
     },
     add_count(state,val) {
@@ -30,6 +32,21 @@ const store=new Vuex.Store({
         }
       })
     },
+    delete_one(state,val) {
+      state.shopcartlist.forEach((value,index) => {
+        if (val===value){
+          state.shopcartlist.splice(index,1)
+        }
+
+      })
+    },
+    addadressinfo(state,val){
+      state.adressinfo.receiverName=val[0];
+      state.adressinfo.receiverMobile=val[1];
+      state.adressinfo.address=val[2];
+      state.adressinfo.receiverZip=val[3];
+      state.adressinfo.receiverAddress=val[4];
+    }
   },
   actions: {
     adddata(context, val) {
@@ -47,6 +64,12 @@ const store=new Vuex.Store({
     addcount(context,val) {
       context.commit('add_count',val)
     },
+    deleteone(context,val) {
+      context.commit('delete_one',val)
+    },
+    addadress(context,val){
+      context.commit('addadressinfo',val)
+    }
 
   }
 });
